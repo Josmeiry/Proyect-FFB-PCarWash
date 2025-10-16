@@ -1,92 +1,94 @@
 <template>
-  
-  
-  <head>
-    <title>MAJOAD - Inicios</title>
+  <div class="page">
+    <header>
+      <h2><img src="/public/logo.png" id="img"> MAJOAD</h2>
+      <nav>
+        <a href="#">Inicio</a>
+        <a href="#">Servicios</a>
+      </nav>
+    </header>
 
-    <meta name="description" content="Encuentra las mejores ofertas de trabajo para
-     desarrolladores en DevJobs.">
-
-     <link rel="stylesheet" href="style.css">
-     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css">
-
-  </head>
-    <body>
-
-      <header>
-              <h2><img src="#" > MAJOAD</h2>
-          <nav>
-            <a href="#" target="_blank"  rel="noopener noreferrer" >Inicio</a> <!--o  _self-->
-            <a href="#">Servicios</a>
-         </nav>
-
-        
-      </header>
-
-
+    <div class="content">
+      <!-- Lista de Car Wash -->
       <div class="carwash-list">
-    <h2>Ubicaiones de los  Car Wash</h2>
+        <h2>Ubicaciones de los Car Wash</h2>
 
-    <!-- Aquí estan los car wash -->
-    <div class="carwash-item" data-lat="19.456393496498297" data-lng="-70.66472146167517">S52 auto spa   
-        <p>Carr. Duarte, Santiago de los Caballeros 51000</p>
+        <div
+          class="carwash-item"
+          v-for="(carwash, index) in carwashes"
+          :key="index"
+          @click="showOnMap(carwash)"
+        >
+          <strong>{{ carwash.name }}</strong>
+          <p>{{ carwash.address }}</p>
+        </div>
+      </div>
+
+      <!-- Mapa -->
+      <div id="map"></div>
     </div>
-    <div class="carwash-item" data-lat="19.433294152871795" data-lng="-70.67915059927826">H2O Car Wash
-        <p>C8J9+VR5, C. Mama Tingo, Santiago de los Caballeros 51000</p>
-    </div>
-    <div class="carwash-item" data-lat="19.454668288796945" data-lng="-70.69556193520054" >Express Wash Factory
-        <p>Av. Juan Pablo Duarte, Santiago de los Caballeros 51000</p>
-    </div>  
+
+    <footer>
+      <article>
+        <h3>Links</h3>
+        <p>Privacy Policy</p>
+        <p>Terms of Service</p>
+        <p>Contact Us</p>
+      </article>
+
+      <article>
+        <h3>Follow Us</h3>
+        <p>Facebook</p>
+        <p>Twitter</p>
+        <p>Instagram</p>
+      </article>
+
+      <small>&copy;2025 MAJOAD</small>
+    </footer>
   </div>
-
-  <div id="map"></div>     
-
-  
-    </body>  
-      
-   <footer>
-           
-
-            <article>
-              <h3>Links</h3>
-              <p>Privacy Policy</p>
-              <p>Terms of Service</p>
-              <p>Contact Us</p>
-            </article>
-
-            <article>
-              <h3>Follow Us</h3>
-              <p>Facebook</p>
-              <p>Twitter</p>
-              <p>Instagram</p>
-            </article>  
-
-             <small>&copy;2025 MAJOAD</small>
-        </footer>
 </template>
 
+<script setup>
+import { onMounted } from 'vue'
+import L from 'leaflet'
+import 'leaflet/dist/leaflet.css'
 
-  <script src="https://unpkg.com/leaflet/dist/leaflet.js" >
-     
-    // Inicializar el mapa (zona promedio de los car wash en santiago)
-    const map = L.map('map').setView([19.445, -70.68], 13);
+const carwashes = [
+  {
+    name: 'S52 Auto Spa',
+    address: 'Carr. Duarte, Santiago de los Caballeros 51000',
+    lat: 19.456393496498297,
+    lng: -70.66472146167517
+  },
+  {
+    name: 'H2O Car Wash',
+    address: 'C8J9+VR5, C. Mama Tingo, Santiago de los Caballeros 51000',
+    lat: 19.433294152871795,
+    lng: -70.67915059927826
+  },
+  {
+    name: 'Express Wash Factory',
+    address: 'Av. Juan Pablo Duarte, Santiago de los Caballeros 51000',
+    lat: 19.454668288796945,
+    lng: -70.69556193520054
+  }
+]
 
-    // Cargar mapa normal (OpenStreetMap)
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '&copy; OpenStreetMap contributors'
-    }).addTo(map);
+let map
 
-    // Función para clic en un car wash
-    document.querySelectorAll('.carwash-item').forEach(item => {
-      item.addEventListener('click', () => {
-        const lat = parseFloat(item.dataset.lat);
-        const lng = parseFloat(item.dataset.lng);
+onMounted(() => {
+  map = L.map('map').setView([19.445, -70.68], 13)
 
-        // Mover el mapa y agregar marcador
-        map.setView([lat, lng], 16);
-        L.marker([lat, lng]).addTo(map)
-          .bindPopup(`<b>${item.textContent}</b>`)
-          .openPopup();
-      });
-    });
-  </script>
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; OpenStreetMap contributors'
+  }).addTo(map)
+})
+
+function showOnMap(carwash) {
+  map.setView([carwash.lat, carwash.lng], 16)
+  L.marker([carwash.lat, carwash.lng])
+    .addTo(map)
+    .bindPopup(`<b>${carwash.name}</b><br>${carwash.address}`)
+    .openPopup()
+}
+</script>
