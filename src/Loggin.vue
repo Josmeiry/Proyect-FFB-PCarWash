@@ -5,7 +5,8 @@
     <form @submit.prevent="iniciarSesion">
       <input v-model="correo" type="email" placeholder="Correo" required />
       <input v-model="nombre" type="text" placeholder="Nombre" required />
-      <button type="submit">Entrar</button>
+      <input v-model="contrasena" type="password" placeholder="Contraseña" />
+      <button @click="registrarUsuario">Registrar</button>
     </form>
 
     <p v-if="mensaje" class="msg">{{ mensaje }}</p>
@@ -18,6 +19,7 @@ import axios from "axios";
 
 const nombre = ref("");
 const correo = ref("");
+const contrasena = ref("");
 const mensaje = ref("");
 
 const API_URL = "http://localhost:2629/Usuario";
@@ -26,7 +28,8 @@ const iniciarSesion = async () => {
   try {
     const res = await axios.post(API_URL, {
       nombre: nombre.value,
-      correo: correo.value
+      correo: correo.value,
+      contrasena: contrasena.value
     });
 
     mensaje.value = res.data.mensaje;
@@ -35,6 +38,7 @@ const iniciarSesion = async () => {
     // Limpiar inputs si quieres
     nombre.value = "";
     correo.value = "";
+    contrasena.value = "";
   } catch (err) {
     console.error("Error al iniciar sesión:", err);
     mensaje.value = "❌ No se pudo iniciar sesión";
