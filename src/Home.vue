@@ -82,6 +82,10 @@ onMounted(() => {
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '&copy; OpenStreetMap contributors'
   }).addTo(map)
+  //  fuerza a Leaflet a recalcular el tamaño después de cargar
+  setTimeout(() => {
+    map.invalidateSize();
+  }, 300);
 })
 
 function showOnMap(carwash) {

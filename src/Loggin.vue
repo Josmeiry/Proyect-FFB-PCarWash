@@ -82,6 +82,6 @@ input, button {
 .msg {
   margin-top: 10px;
   font-weight: bold;
-  color: red;
+  color: rgb(4, 189, 35);
 }
 </style>

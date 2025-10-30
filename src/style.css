@@ -221,3 +221,62 @@ footer {
     font-size: 0.875rem;
   }
 }
+
+
+/*  RESPONSIVE DESIGN MEJORADO para cel y pc */
+@media (max-width: 768px) {
+  .content {
+    flex-direction: column; /* lista arriba, mapa abajo */
+    align-items: center;
+  }
+
+  .carwash-list {
+    width: 100%; /* ocupar todo el ancho */
+    border-right: none;
+    border-bottom: 1px solid #ddd;
+    padding: 15px;
+  }
+
+  .carwash-list h2 {
+    text-align: center;
+    font-size: 1.2rem;
+  }
+
+  .carwash-item {
+    text-align: center;
+    border-bottom: 1px solid #eee;
+    padding: 10px 0;
+  }
+
+#map {
+  flex: 1;
+  min-height: 400px; /* Asegura altura mínima */
+  width: 100%;
+  margin: 10px;
+  border-radius: 10px;
+  box-shadow: 0 0 8px rgba(0,0,0,0.1);
+}
+
+
+  footer {
+    flex-direction: column;
+    text-align: center;
+    gap: 10px;
+  }
+}
+
+/*  Ajuste adicional para pantallas muy pequeñas */
+@media (max-width: 480px) {
+  #map {
+    width: 95%;
+    height: 300px;
+  }
+
+  .carwash-list h2 {
+    font-size: 1rem;
+  }
+
+  .carwash-item p {
+    font-size: 13px;
+  }
+}
