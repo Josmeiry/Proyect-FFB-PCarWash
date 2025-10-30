@@ -266,17 +266,10 @@ footer {
 }
 
 /*  Ajuste adicional para pantallas muy pequeñas */
-@media (max-width: 480px) {
+@media (max-width: 768px) {
   #map {
     width: 95%;
-    height: 300px;
-  }
-
-  .carwash-list h2 {
-    font-size: 1rem;
-  }
-
-  .carwash-item p {
-    font-size: 13px;
+    height: 45vh; /* ajusta según el alto de pantalla */
+    margin: 10px auto;
   }
 }

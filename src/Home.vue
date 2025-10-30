@@ -27,6 +27,13 @@
       <!-- Mapa -->
       <div id="map"></div>
     </div>
+    <link
+  rel="stylesheet"
+  href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+  media="print"
+  onload="this.media='all'"
+/>
+
 
     <footer>
       <article>
@@ -95,4 +102,9 @@ function showOnMap(carwash) {
     .bindPopup(`<b>${carwash.name}</b><br>${carwash.address}`)
     .openPopup()
 }
+
+map.whenReady(() => {
+  map.invalidateSize();
+});
+
 </script>
