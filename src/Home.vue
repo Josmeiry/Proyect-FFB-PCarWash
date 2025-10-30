@@ -103,8 +103,6 @@ function showOnMap(carwash) {
     .openPopup()
 }
 
-map.whenReady(() => {
-  map.invalidateSize();
-});
+
 
 </script>
