@@ -249,13 +249,14 @@ footer {
   }
 
 #map {
-  flex: 1;
-  min-height: 400px; /* Asegura altura mínima */
   width: 100%;
+  min-height: 350px; /* asegura visibilidad */
+  height: 400px;     /* puedes ajustar o cambiar por vh en móvil */
   margin: 10px;
   border-radius: 10px;
   box-shadow: 0 0 8px rgba(0,0,0,0.1);
 }
+
 
 
   footer {

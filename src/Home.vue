@@ -27,12 +27,11 @@
       <!-- Mapa -->
       <div id="map"></div>
     </div>
-    <link
+  <link
   rel="stylesheet"
   href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-  media="print"
-  onload="this.media='all'"
 />
+
 
 
     <footer>
@@ -54,55 +53,46 @@
     </footer>
   </div>
 </template>
-
 <script setup>
-import { onMounted } from 'vue'
+import { onMounted, nextTick } from 'vue'
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
 
 const carwashes = [
-  {
-    name: 'S52 Auto Spa',
-    address: 'Carr. Duarte, Santiago de los Caballeros 51000',
-    lat: 19.456393496498297,
-    lng: -70.66472146167517
-  },
-  {
-    name: 'H2O Car Wash',
-    address: 'C8J9+VR5, C. Mama Tingo, Santiago de los Caballeros 51000',
-    lat: 19.433294152871795,
-    lng: -70.67915059927826
-  },
-  {
-    name: 'Express Wash Factory',
-    address: 'Av. Juan Pablo Duarte, Santiago de los Caballeros 51000',
-    lat: 19.454668288796945,
-    lng: -70.69556193520054
-  }
+  { name: 'S52 Auto Spa', address: 'Carr. Duarte, Santiago de los Caballeros 51000', lat: 19.456393496498297, lng: -70.66472146167517 },
+  { name: 'H2O Car Wash', address: 'C8J9+VR5, C. Mama Tingo, Santiago de los Caballeros 51000', lat: 19.433294152871795, lng: -70.67915059927826 },
+  { name: 'Express Wash Factory', address: 'Av. Juan Pablo Duarte, Santiago de los Caballeros 51000', lat: 19.454668288796945, lng: -70.69556193520054 }
 ]
 
 let map
 
-onMounted(() => {
+onMounted(async () => {
+  // espera que el DOM se actualice
+  await nextTick()
+
+  // crea el mapa
   map = L.map('map').setView([19.445, -70.68], 13)
 
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '&copy; OpenStreetMap contributors'
+    attribution: '&copy; OpenStreetMap contributors',
+    maxZoom: 19
   }).addTo(map)
-  //  fuerza a Leaflet a recalcular el tamaño después de cargar
-  setTimeout(() => {
-    map.invalidateSize();
-  }, 300);
+
+  // Asegura que Leaflet calcule correctamente el tamaño del mapa
+  map.whenReady(() => {
+    // invalidateSize es la forma recomendada
+    map.invalidateSize({ animate: false })
+  })
 })
 
 function showOnMap(carwash) {
+  if (!map) return
   map.setView([carwash.lat, carwash.lng], 16)
+
+  // crear marcador y bindPopup con STRING (plantilla)
   L.marker([carwash.lat, carwash.lng])
     .addTo(map)
     .bindPopup(`<b>${carwash.name}</b><br>${carwash.address}`)
     .openPopup()
 }
-
-
-
 </script>
