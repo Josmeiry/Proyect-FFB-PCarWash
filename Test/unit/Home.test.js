@@ -2,7 +2,7 @@ import { mount } from '@vue/test-utils'
 import { describe, it, expect, vi } from 'vitest'
 import MapaCarWash from '../../src/Home.vue'
 
-// 🧠 Simulamos Leaflet para no cargar el mapa real
+//  Simulamos Leaflet para no cargar el mapa real
 vi.mock('leaflet', () => {
   const mockMap = {
     setView: vi.fn().mockReturnThis(),

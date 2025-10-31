@@ -1,18 +1,9 @@
 <template>
   <div class="page">
-    <!--<header>
-      <h2><img src="/public/logo.png" id="img"> MAJOAD</h2>-->
-      <!-- <nav>
-        <a href="#" >Inicio</a>
-        <a href="#">Servicios</a>
-      </nav>
-    </header>-->
-
     <div class="content">
       <!-- Lista de Car Wash -->
       <div class="carwash-list">
         <h2>Ubicaciones de los Car Wash</h2>
-
         <div
           class="carwash-item"
           v-for="(carwash, index) in carwashes"
@@ -27,12 +18,6 @@
       <!-- Mapa -->
       <div id="map"></div>
     </div>
-  <link
-  rel="stylesheet"
-  href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-/>
-
-
 
     <footer>
       <article>
@@ -53,6 +38,7 @@
     </footer>
   </div>
 </template>
+
 <script setup>
 import { onMounted, nextTick } from 'vue'
 import L from 'leaflet'
@@ -64,35 +50,120 @@ const carwashes = [
   { name: 'Express Wash Factory', address: 'Av. Juan Pablo Duarte, Santiago de los Caballeros 51000', lat: 19.454668288796945, lng: -70.69556193520054 }
 ]
 
-let map
+let map = null
+let userMarker = null
+let carwashMarkers = []
 
 onMounted(async () => {
-  // espera que el DOM se actualice
   await nextTick()
 
-  // crea el mapa
-  map = L.map('map').setView([19.445, -70.68], 13)
+  map = L.map('map', {
+    center: [19.45, -70.68],
+    zoom: 13
+  })
 
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '&copy; OpenStreetMap contributors',
-    maxZoom: 19
+    attribution: '&copy; OpenStreetMap contributors'
   }).addTo(map)
 
-  // Asegura que Leaflet calcule correctamente el tamaño del mapa
-  map.whenReady(() => {
-    // invalidateSize es la forma recomendada
-    map.invalidateSize({ animate: false })
-  })
+  map.whenReady(() => setTimeout(() => map.invalidateSize(), 200))
+
+  // Agregar control personalizado (botón para localizar)
+  addLocateControl()
 })
 
+// Iconos personalizados
+const userIcon = L.icon({
+  iconUrl: 'https://cdn.jsdelivr.net/gh/pointhi/leaflet-color-markers@master/img/marker-icon-2x-blue.png',
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+  popupAnchor: [1, -34],
+  shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png'
+})
+
+const carwashIcon = L.icon({
+  iconUrl: 'https://cdn.jsdelivr.net/gh/pointhi/leaflet-color-markers@master/img/marker-icon-2x-red.png',
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+  popupAnchor: [1, -34],
+  shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png'
+})
+
+// Control 📍
+function addLocateControl() {
+  const LocateControl = L.Control.extend({
+    options: { position: 'topright' },
+    onAdd: function () {
+      const container = L.DomUtil.create('div', 'leaflet-bar leaflet-control locate-control')
+      const button = L.DomUtil.create('a', '', container)
+      button.href = '#'
+      button.title = 'Mostrar mi ubicación'
+      button.innerHTML = '📍'
+      L.DomEvent.disableClickPropagation(container)
+      L.DomEvent.on(button, 'click', L.DomEvent.stop)
+      L.DomEvent.on(button, 'click', async (e) => {
+        e.preventDefault()
+        await locateAndShow()
+      })
+      return container
+    }
+  })
+  map.addControl(new LocateControl())
+}
+
+// Localizar usuario + mostrar marcadores
+async function locateAndShow() {
+  if (!navigator.geolocation) {
+    alert('Tu navegador no soporta geolocalización')
+    return
+  }
+
+  try {
+    const pos = await new Promise((resolve, reject) =>
+      navigator.geolocation.getCurrentPosition(resolve, reject, { enableHighAccuracy: true })
+    )
+
+    const lat = pos.coords.latitude
+    const lng = pos.coords.longitude
+
+    if (userMarker) {
+      userMarker.setLatLng([lat, lng])
+    } else {
+      userMarker = L.marker([lat, lng], { icon: userIcon })
+        .addTo(map)
+        .bindPopup('<b>📍 Estás aquí</b>')
+        .openPopup()
+    }
+
+    // Añadir los car wash si aún no están
+    if (carwashMarkers.length === 0) {
+      carwashes.forEach(cw => {
+        const m = L.marker([cw.lat, cw.lng], { icon: carwashIcon })
+          .addTo(map)
+          .bindPopup(`<b>${cw.name}</b><br>${cw.address}`)
+        carwashMarkers.push(m)
+      })
+    }
+
+    // Ajustar vista para mostrar todo
+    const bounds = L.latLngBounds([
+      [lat, lng],
+      ...carwashes.map(c => [c.lat, c.lng])
+    ])
+    map.fitBounds(bounds.pad(0.2))
+  } catch (err) {
+    console.error('Error de geolocalización:', err)
+    alert('No se pudo obtener tu ubicación.')
+  }
+}
+
+// Click desde la lista
 function showOnMap(carwash) {
   if (!map) return
   map.setView([carwash.lat, carwash.lng], 16)
-
-  // crear marcador y bindPopup con STRING (plantilla)
-  L.marker([carwash.lat, carwash.lng])
-    .addTo(map)
-    .bindPopup(`<b>${carwash.name}</b><br>${carwash.address}`)
-    .openPopup()
+  L.popup()
+    .setLatLng([carwash.lat, carwash.lng])
+    .setContent(`<b>${carwash.name}</b><br>${carwash.address}`)
+    .openOn(map)
 }
 </script>

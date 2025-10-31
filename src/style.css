@@ -274,3 +274,37 @@ footer {
     margin: 10px auto;
   }
 }
+
+/* Botón 📍 de geolocalización en el mapa */
+.leaflet-control.locate-control a {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  background: white;
+  border-radius: 4px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+  font-size: 18px;
+  cursor: pointer;
+}
+
+/* Responsive para el mapa */
+@media (max-width: 768px) {
+  .content {
+    flex-direction: column;
+  }
+
+  .carwash-list {
+    width: 100%;
+    border-right: none;
+    border-bottom: 1px solid #ddd;
+  }
+
+  #map {
+    width: 95%;
+    margin: 10px auto;
+    height: 45vh;
+  }
+}
+
